@@ -10,6 +10,8 @@ using std::vector;
 using std::endl;
 using std::setw;
 using std::left;
+using std::fixed;
+using std::setprecision;
 
 struct Student {
     string var;
@@ -33,7 +35,17 @@ int main()
     }
     cout << "Koks egzamino ivertinimas? "; cin >> stud.egz;
     stud.gal = 0.4 * double(suma)/double(n) + 0.6 * stud.egz;
-    cout << setw(10) << left << stud.var << setw(15) << left << stud.pav << stud.gal << endl;
+
+    cout << setw(15) << left << "Pavarde"
+         << setw(10) << left << "Vardas"
+         << "Galutinis (Vid.)" << endl;
+
+
+    cout << "----------------------------------------" << endl;
+
+    cout << setw(15) << left << stud.pav
+         << setw(10) << left << stud.var 
+         << fixed << setprecision(2) << stud.gal << endl;
 }
 
 
