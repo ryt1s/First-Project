@@ -56,14 +56,6 @@ int main()
         cin >> testi;
     } while(testi == 't' || testi == 'T');
 
-    //  for (auto i = 0; i<n; i++) {
-    //     cout << i+1 << "-asis pazymys: "; cin >> laik_paz;
-    //     stud.paz.push_back(laik_paz);
-    //     suma+=laik_paz;
-    // }
-    // cout << "Koks egzamino ivertinimas? "; cin >> stud.egz;
-    // stud.gal = 0.4 * double(suma)/double(n) + 0.6 * stud.egz;
-
     cout << setw(15) << left << "Pavarde"
          << setw(10) << left << "Vardas"
          << "Galutinis (Vid.)" << endl;
@@ -71,7 +63,9 @@ int main()
 
     cout << "----------------------------------------" << endl;
 
-//     cout << setw(15) << left << stud.pav
-//          << setw(10) << left << stud.var 
-//          << fixed << setprecision(2) << stud.gal << endl;
-}
+    for (const auto& stud : studentai) {
+        cout << setw(15) << left << stud.pav
+             << setw(10) << left << stud.var
+             << fixed << setprecision(2) << stud.gal << endl;
+    }
+} 
