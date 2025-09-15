@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <sstream>
 
 using std::cout;
 using std::cin;
@@ -16,6 +18,8 @@ using std::left;
 using std::fixed;
 using std::setprecision;
 using std::sort;
+using std::getline;
+using std::ifstream;
 
 struct Student {
     string var;
@@ -36,7 +40,39 @@ double skaiciuotiMediana(vector<int> paz) {
         return (paz[n / 2 - 1] + paz[n / 2]) / 2.0;
 }
 
+void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
+    ifstream fin(filename);
+    if (!fin) {
+        cout << "Nepavyko atidaryti failo: " << filename << endl;
+        return;
+    }
 
+    string headerLine;
+    getline(fin, headerLine); // skip header
+
+      string pav, var;
+    while (fin >> pav >> var) {
+        Student stud;
+        stud.pav = pav;
+        stud.var = var;
+
+        int pazymys;
+        for (int i = 0; i < 5; i++) {  // ND1..ND5
+            fin >> pazymys;
+            stud.paz.push_back(pazymys);
+        }
+        fin >> stud.egz;
+
+        int suma = 0;
+        for (int nd : stud.paz) suma += nd;
+        stud.galVid = 0.4 * (double)suma / stud.paz.size() + 0.6 * stud.egz;
+        stud.galMed = 0.4 * skaiciuotiMediana(stud.paz) + 0.6 * stud.egz;
+
+        studentai.push_back(stud);
+    }
+
+    fin.close();
+}
 
 int main()
 {
@@ -52,17 +88,25 @@ int main()
     cout << "Jusu pasirinkimas: ";
     cin >> metodas;
 
+    int pasirinkimas;
+    cout << "Pasirinkite duomenu ivedimo buda:\n";
+    cout << "1 - Ivesti ranka\n";
+    cout << "2 - Generuoti atsitiktinai\n";
+    cout << "3 - Nuskaityti is failo (kursiokai.txt)\n";
+    cout << "Jusu pasirinkimas: ";
+    cin >> pasirinkimas;
+
+    if (pasirinkimas == 3) {
+        nuskaitytiIsFailo("kursiokai.txt", studentai);
+    } else{
+
     do {
         int suma = 0, laik_paz;
         Student stud;
         cout << "Kuo vardu studentas(-e)?"; cin >> stud.var;
         cout << "Kokia jo (jos) pavarde? "; cin >> stud.pav;
 
-        int IvestiArRandom;
-        cout << "Pasirinkite: 1 - ivesti pazymius ranka, 2 - generuoti atsitiktinai: ";
-        cin >> IvestiArRandom;
-
-        if (IvestiArRandom == 1){
+        if (pasirinkimas == 1){
             cout << "Iveskite namu darbu pazymius (0 - baigti):" << endl;
             while(true) {
                 cin >> laik_paz;
@@ -99,6 +143,7 @@ int main()
         cout << "Ar norite ivesti dar viena studenta? (t/n):";
         cin >> testi;
     } while(testi == 't' || testi == 'T');
+ }
 
     cout << setw(15) << left << "Pavarde"
          << setw(10) << left << "Vardas";
