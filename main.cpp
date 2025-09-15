@@ -118,7 +118,22 @@ int main()
             cout << "Iveskite namu darbu pazymius (0 - baigti):" << endl;
             while(true) {
                 cin >> laik_paz;
+
+                if (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(1000, '\n');
+                    cout << "\nKlaida! Iveskite sveika skaiciu:";
+                    continue;
+                }
+
                 if (laik_paz == 0) break;
+
+                if (laik_paz < 1 || laik_paz > 10) { 
+                    cout << "Balas turi buti nuo 1 iki 10. Bandykite dar karta: ";
+                    continue;
+                }
+
+                
                 stud.paz.push_back(laik_paz);
                 suma += laik_paz;
             }
