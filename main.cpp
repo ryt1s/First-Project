@@ -134,7 +134,7 @@ int main()
     cin >> pasirinkimas;
 
     if (pasirinkimas == 3) {
-        nuskaitytiIsFailo("studentai10000.txt", studentai);
+        nuskaitytiIsFailo("kursiokai.txt", studentai);
     } else{
 
     do {
