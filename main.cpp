@@ -8,18 +8,12 @@
 #include <fstream>
 #include <sstream>
 
-using std::cout;
-using std::cin;
-using std::string;
-using std::vector;
-using std::endl;
-using std::setw;
-using std::left;
-using std::fixed;
-using std::setprecision;
-using std::sort;
-using std::getline;
-using std::ifstream;
+using std::cout; using std::cin;
+using std::string; using std::vector;
+using std::endl; using std::setw;
+using std::left; using std::fixed;
+using std::setprecision; using std::sort;
+using std::getline; using std::ifstream;
 using std::istringstream;
 
 struct Student {
@@ -82,6 +76,29 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
     fin.close();
 }
 
+int inputSkaicius(const string& pranesimas, int min, int max) {
+    int value;
+    while (true) {
+        cout << pranesimas;
+        cin >> value;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Klaida! Iveskite sveika skaiciu.\n";
+            continue;
+        }
+
+        if (value < min || value > max) {
+            cout << "Balas turi buti nuo " << min << " iki " << max << ". Bandykite dar karta.\n";
+            continue;
+        }
+
+        break;
+    }
+    return value;
+}
+
 int main()
 {
     srand(time(0));
@@ -117,45 +134,14 @@ int main()
         if (pasirinkimas == 1){
             cout << "Iveskite namu darbu pazymius (0 - baigti):" << endl;
             while(true) {
-                cin >> laik_paz;
-
-                if (cin.fail()) {
-                    cin.clear();
-                    cin.ignore(1000, '\n');
-                    cout << "\nKlaida! Iveskite sveika skaiciu:";
-                    continue;
-                }
-
+                laik_paz = inputSkaicius("Iveskite namu darbo bala (0 baigti): ", 0, 10); 
                 if (laik_paz == 0) break;
-
-                if (laik_paz < 1 || laik_paz > 10) { 
-                    cout << "Balas turi buti nuo 1 iki 10. Bandykite dar karta: ";
-                    continue;
-                }
-
                 
                 stud.paz.push_back(laik_paz);
                 suma += laik_paz;
             }
-            while (true) {
-                cout << "Koks egzamino ivertinimas? ";
-                cin >> stud.egz;
-
-                if (cin.fail()) {
-                    cin.clear();
-                    cin.ignore(1000, '\n');
-                    cout << "Klaida! Iveskite sveika skaiciu: ";
-                    continue;
-                }
-
-                if (stud.egz < 1 || stud.egz > 10) {
-                    cout << "Egzamino balas turi buti nuo 1 iki 10. Bandykite dar karta: ";
-                    continue;
-                }
-
-                break;
-            }
-
+            
+            stud.egz = inputSkaicius("Koks egzamino ivertinimas? ", 1, 10);
         } else {
             int kiek = rand() % 10 + 1;
             cout << "Sugeneruoti " << kiek << " namu darbu pazymiai: ";
