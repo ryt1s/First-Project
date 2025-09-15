@@ -20,6 +20,7 @@ using std::setprecision;
 using std::sort;
 using std::getline;
 using std::ifstream;
+using std::istringstream;
 
 struct Student {
     string var;
@@ -48,20 +49,27 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
     }
 
     string headerLine;
-    getline(fin, headerLine); // skip header
+    getline(fin, headerLine); 
 
-      string pav, var;
-    while (fin >> pav >> var) {
+    string line;
+    while (getline(fin, line)) {
+        if (line.empty()) continue;
+
+        istringstream iss(line);
         Student stud;
-        stud.pav = pav;
-        stud.var = var;
+        iss >> stud.pav >> stud.var;
 
         int pazymys;
-        for (int i = 0; i < 5; i++) {  // ND1..ND5
-            fin >> pazymys;
-            stud.paz.push_back(pazymys);
+        vector<int> paz;
+        while (iss >> pazymys) {
+            paz.push_back(pazymys);
         }
-        fin >> stud.egz;
+
+        if (paz.empty()) continue;
+
+        stud.egz = paz.back();   
+        paz.pop_back();
+        stud.paz = paz;
 
         int suma = 0;
         for (int nd : stud.paz) suma += nd;
@@ -117,16 +125,16 @@ int main()
             cout << "Koks egzamino ivertinimas? ";
             cin >> stud.egz;
         } else {
-            int kiek = rand() % 10 + 1; // 1-10 namų darbų
+            int kiek = rand() % 10 + 1;
             cout << "Sugeneruoti " << kiek << " namu darbu pazymiai: ";
             for (int i = 0; i < kiek; i++) {
-                int paz = rand() % 10 + 1; // pazymiai 1-10
+                int paz = rand() % 10 + 1;
                 stud.paz.push_back(paz);
                 suma += paz;
                 cout << paz << " ";
             }
             cout << endl;
-            stud.egz = rand() % 10 + 1; // egzaminas 1-10
+            stud.egz = rand() % 10 + 1; 
             cout << "Sugeneruotas egzamino ivertinimas: " << stud.egz << endl;
         }
         
