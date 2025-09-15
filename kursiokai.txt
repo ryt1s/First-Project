@@ -1,6 +1,6 @@
 Pavarde    Vardas    ND1 ND2 ND3 ND4 ND5 Egzaminas
 Jonaitis   Jonas     8   9   7   10  6   9
-Petrauskas Petras    5   6   7   5   8   7
-Sakalauskaite Ona    10  9   10  10  9   10
+Petrauskas Petras    5   6   7   5   8   5
+Sakalauskaite Ona    c  9   10  10  9   10
 Kazlauskas Mantas    4   7   6   5   7   6
 Zukauskiene Aiste    9   8   9   7   8   9

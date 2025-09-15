@@ -35,6 +35,13 @@ double skaiciuotiMediana(vector<int> paz) {
         return (paz[n / 2 - 1] + paz[n / 2]) / 2.0;
 }
 
+void skaiciuotiGalutinius(Student& stud) {
+    int suma = 0;
+    for (int nd : stud.paz) suma += nd;
+    stud.galVid = stud.paz.empty() ? 0.6 * stud.egz : 0.4 * (double)suma / stud.paz.size() + 0.6 * stud.egz;
+    stud.galMed = stud.paz.empty() ? 0.6 * stud.egz : 0.4 * skaiciuotiMediana(stud.paz) + 0.6 * stud.egz;
+}
+
 void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
     ifstream fin(filename);
     if (!fin) {
@@ -51,25 +58,30 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
 
         istringstream iss(line);
         Student stud;
-        iss >> stud.pav >> stud.var;
-
-        int pazymys;
-        vector<int> paz;
-        while (iss >> pazymys) {
-            paz.push_back(pazymys);
+        if (!(iss >> stud.pav >> stud.var)) {
+            cout << "Klaida faile: nepavyko nuskaityti vardo arba pavardes." << endl;
+            continue; // praleidžiame blogą įrašą
         }
 
-        if (paz.empty()) continue;
+        vector<int> paz;
+        int balas;
+        bool klaida = false;
 
-        stud.egz = paz.back();   
-        paz.pop_back();
+        while (iss >> balas) {
+            if (balas < 0 || balas > 10) {
+                cout << "Klaida faile studentui " << stud.pav << " " << stud.var 
+                     << ": balas ne intervale 0-10.\n";
+                klaida = true;
+                break;
+            }
+            paz.push_back(balas);
+        }
+
+        if (klaida || paz.empty()) continue; // praleidžiame blogą įraš
+
+        stud.egz = paz.back(); paz.pop_back();
         stud.paz = paz;
-
-        int suma = 0;
-        for (int nd : stud.paz) suma += nd;
-        stud.galVid = 0.4 * (double)suma / stud.paz.size() + 0.6 * stud.egz;
-        stud.galMed = 0.4 * skaiciuotiMediana(stud.paz) + 0.6 * stud.egz;
-
+        skaiciuotiGalutinius(stud);
         studentai.push_back(stud);
     }
 
@@ -132,7 +144,6 @@ int main()
         cout << "Kokia jo (jos) pavarde? "; cin >> stud.pav;
 
         if (pasirinkimas == 1){
-            cout << "Iveskite namu darbu pazymius (0 - baigti):" << endl;
             while(true) {
                 laik_paz = inputSkaicius("Iveskite namu darbo bala (0 baigti): ", 0, 10); 
                 if (laik_paz == 0) break;
