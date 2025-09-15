@@ -137,8 +137,25 @@ int main()
                 stud.paz.push_back(laik_paz);
                 suma += laik_paz;
             }
-            cout << "Koks egzamino ivertinimas? ";
-            cin >> stud.egz;
+            while (true) {
+                cout << "Koks egzamino ivertinimas? ";
+                cin >> stud.egz;
+
+                if (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(1000, '\n');
+                    cout << "Klaida! Iveskite sveika skaiciu: ";
+                    continue;
+                }
+
+                if (stud.egz < 1 || stud.egz > 10) {
+                    cout << "Egzamino balas turi buti nuo 1 iki 10. Bandykite dar karta: ";
+                    continue;
+                }
+
+                break;
+            }
+
         } else {
             int kiek = rand() % 10 + 1;
             cout << "Sugeneruoti " << kiek << " namu darbu pazymiai: ";
