@@ -134,7 +134,7 @@ int main()
     cin >> pasirinkimas;
 
     if (pasirinkimas == 3) {
-        nuskaitytiIsFailo("kursiokai.txt", studentai);
+        nuskaitytiIsFailo("studentai10000.txt", studentai);
     } else{
 
     do {
@@ -183,7 +183,7 @@ int main()
  }
 
     cout << setw(15) << left << "Pavarde"
-         << setw(10) << left << "Vardas";
+         << setw(15) << left << "Vardas";
 
     if (metodas == 1)
         cout << "Galutinis (Vid.)";
@@ -202,7 +202,7 @@ int main()
     });
     for (const auto& stud : studentai) {
         cout << setw(15) << left << stud.pav
-             << setw(10) << left << stud.var;
+             << setw(15) << left << stud.var;
         if (metodas == 1)
             cout << fixed << setprecision(2) << stud.galVid;
         else if (metodas == 2)
