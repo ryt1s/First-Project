@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <cstdlib>
+#include <ctime>
 
 using std::cout;
 using std::cin;
@@ -38,6 +40,7 @@ double skaiciuotiMediana(vector<int> paz) {
 
 int main()
 {
+    srand(time(0));
     vector<Student> studentai;
     char testi;
 
@@ -54,18 +57,34 @@ int main()
         Student stud;
         cout << "Kuo vardu studentas(-e)?"; cin >> stud.var;
         cout << "Kokia jo (jos) pavarde? "; cin >> stud.pav;
-        cout << "Iveskite namu darbu pazymius (0 - baigti):" << endl;
 
-        while(true) {
-            cin >> laik_paz;
-            if (laik_paz == 0) break;
-            
-            stud.paz.push_back(laik_paz);
-            suma += laik_paz;
+        int IvestiArRandom;
+        cout << "Pasirinkite: 1 - ivesti pazymius ranka, 2 - generuoti atsitiktinai: ";
+        cin >> IvestiArRandom;
+
+        if (IvestiArRandom == 1){
+            cout << "Iveskite namu darbu pazymius (0 - baigti):" << endl;
+            while(true) {
+                cin >> laik_paz;
+                if (laik_paz == 0) break;
+                stud.paz.push_back(laik_paz);
+                suma += laik_paz;
+            }
+            cout << "Koks egzamino ivertinimas? ";
+            cin >> stud.egz;
+        } else {
+            int kiek = rand() % 10 + 1; // 1-10 namų darbų
+            cout << "Sugeneruoti " << kiek << " namu darbu pazymiai: ";
+            for (int i = 0; i < kiek; i++) {
+                int paz = rand() % 10 + 1; // pazymiai 1-10
+                stud.paz.push_back(paz);
+                suma += paz;
+                cout << paz << " ";
+            }
+            cout << endl;
+            stud.egz = rand() % 10 + 1; // egzaminas 1-10
+            cout << "Sugeneruotas egzamino ivertinimas: " << stud.egz << endl;
         }
-
-        cout << "Koks egzamino ivertinimas? ";
-        cin >> stud.egz;
         
         if (!stud.paz.empty()) {
             stud.galVid = 0.4 * (double)suma / stud.paz.size() + 0.6 * stud.egz;
