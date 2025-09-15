@@ -160,12 +160,17 @@ int main()
         cout << "Galutinis (Vid.)";
     else if (metodas == 2)
         cout << "Galutinis (Med.)";
-    else
-        cout << "Galutinis (Vid.) / Galutinis (Med.)";
+    else {
+        cout << "Galutinis (Vid.)" << "  ";
+        cout << "Galutinis (Med.)";
+    }
 
     cout << endl;
     cout << "--------------------------------------------------------------" << endl;
 
+    sort(studentai.begin(), studentai.end(), [](const Student& first, const Student& second){
+        return first.pav < second.pav;
+    });
     for (const auto& stud : studentai) {
         cout << setw(15) << left << stud.pav
              << setw(10) << left << stud.var;
@@ -173,9 +178,11 @@ int main()
             cout << fixed << setprecision(2) << stud.galVid;
         else if (metodas == 2)
             cout << fixed << setprecision(2) << stud.galMed;
-        else
-            cout << fixed << setprecision(2) << stud.galVid
-                 << setw(15) << left << "" << stud.galMed;
+        else {
+            cout << setw(18) << left << fixed << setprecision(2) << stud.galVid;
+            cout << setw(17) << left << fixed << setprecision(2) << stud.galMed;
+        }
+
         cout << endl;
     }
 }
