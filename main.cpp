@@ -7,6 +7,7 @@
 #include <ctime>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 
 using std::cout; using std::cin;
 using std::string; using std::vector;
@@ -14,17 +15,19 @@ using std::endl; using std::setw;
 using std::left; using std::fixed;
 using std::setprecision; using std::sort;
 using std::getline; using std::ifstream;
-using std::istringstream;
+using std::ofstream; using std::istringstream;
+using namespace std::chrono;
 
 struct Student {
     string var;
     string pav;
-    vector <int> paz;
+    vector<int> paz;
     int egz;
     double galVid;
     double galMed;
 };
 
+// ======= Skaičiavimai =======
 double skaiciuotiMediana(vector<int> paz) {
     if (paz.empty()) return 0.0;
     sort(paz.begin(), paz.end());
@@ -42,6 +45,7 @@ void skaiciuotiGalutinius(Student& stud) {
     stud.galMed = stud.paz.empty() ? 0.6 * stud.egz : 0.4 * skaiciuotiMediana(stud.paz) + 0.6 * stud.egz;
 }
 
+// ======= Failo nuskaitymas =======
 void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
     ifstream fin(filename);
     if (!fin) {
@@ -50,7 +54,7 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
     }
 
     string headerLine;
-    getline(fin, headerLine); 
+    getline(fin, headerLine);
 
     string line;
     while (getline(fin, line)) {
@@ -60,7 +64,7 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
         Student stud;
         if (!(iss >> stud.pav >> stud.var)) {
             cout << "Klaida faile: nepavyko nuskaityti vardo arba pavardes." << endl;
-            continue; // praleidžiame blogą įrašą
+            continue;
         }
 
         vector<int> paz;
@@ -69,7 +73,7 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
 
         while (iss >> balas) {
             if (balas < 0 || balas > 10) {
-                cout << "Klaida faile studentui " << stud.pav << " " << stud.var 
+                cout << "Klaida faile studentui " << stud.pav << " " << stud.var
                      << ": balas ne intervale 0-10.\n";
                 klaida = true;
                 break;
@@ -77,7 +81,7 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
             paz.push_back(balas);
         }
 
-        if (klaida || paz.empty()) continue; // praleidžiame blogą įraš
+        if (klaida || paz.empty()) continue;
 
         stud.egz = paz.back(); paz.pop_back();
         stud.paz = paz;
@@ -88,6 +92,7 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
     fin.close();
 }
 
+// ======= Įvestis iš vartotojo =======
 int inputSkaicius(const string& pranesimas, int min, int max) {
     int value;
     while (true) {
@@ -111,12 +116,67 @@ int inputSkaicius(const string& pranesimas, int min, int max) {
     return value;
 }
 
-int main()
-{
+// ======= Failų generavimas (su lygiavimu) =======
+void generuotiFaila(const string& filename, int kiekStudentu, int kiekNd) {
+    auto start = high_resolution_clock::now();
+
+    ofstream fout(filename);
+    if (!fout) {
+        std::cerr << "Nepavyko sukurti failo: " << filename << endl;
+        return;
+    }
+
+    // Header
+    fout << setw(12) << left << "Pavarde"
+         << setw(12) << left << "Vardas";
+    for (int i = 1; i <= kiekNd; i++) {
+        fout << setw(5) << ("ND" + std::to_string(i));
+    }
+    fout << setw(10) << "Egzaminas" << "\n";
+
+    // Studentai
+    for (int i = 1; i <= kiekStudentu; i++) {
+        fout << setw(12) << left << ("Pavarde" + std::to_string(i))
+             << setw(12) << left << ("Vardas" + std::to_string(i));
+        for (int j = 0; j < kiekNd; j++) {
+            fout << setw(5) << (rand() % 10 + 1);
+        }
+        fout << setw(10) << (rand() % 10 + 1) << "\n";
+    }
+
+    fout.close();
+
+    auto end = high_resolution_clock::now();
+    std::chrono::duration<double> diff = end - start;
+    cout << "Sugeneruotas failas: " << filename
+         << " (" << kiekStudentu << " irasu) per "
+         << diff.count() << " s\n";
+}
+
+// ======= Main =======
+int main() {
     srand(time(0));
     vector<Student> studentai;
     char testi;
 
+    int pasirinkimas;
+    cout << "Pasirinkite veiksma:\n";
+    cout << "1 - Ivesti / generuoti / nuskaityti studentus\n";
+    cout << "2 - Sugeneruoti testinius failus (1000, 10k, 100k, 1M, 10M)\n";
+    cout << "Jusu pasirinkimas: ";
+    cin >> pasirinkimas;
+
+    if (pasirinkimas == 2) {
+        vector<int> dydziai = {1000, 10000, 100000, 1000000, 10000000};
+        int kiekNd = 5;
+        for (int dydis : dydziai) {
+            string filename = "studentai" + std::to_string(dydis) + ".txt";
+            generuotiFaila(filename, dydis, kiekNd);
+        }
+        return 0;
+    }
+
+    // Toliau - kaip tavo pradinėje versijoje
     int metodas;
     cout << "Pasirinkite galutinio balo skaiciavimo metoda:\n";
     cout << "1 - Vidurkis\n";
@@ -125,62 +185,52 @@ int main()
     cout << "Jusu pasirinkimas: ";
     cin >> metodas;
 
-    int pasirinkimas;
+    int ivestis;
     cout << "Pasirinkite duomenu ivedimo buda:\n";
     cout << "1 - Ivesti ranka\n";
     cout << "2 - Generuoti atsitiktinai\n";
     cout << "3 - Nuskaityti is failo (kursiokai.txt)\n";
     cout << "Jusu pasirinkimas: ";
-    cin >> pasirinkimas;
+    cin >> ivestis;
 
-    if (pasirinkimas == 3) {
+    if (ivestis == 3) {
         nuskaitytiIsFailo("kursiokai.txt", studentai);
-    } else{
+    } else {
+        do {
+            int suma = 0, laik_paz;
+            Student stud;
+            cout << "Kuo vardu studentas(-e)? "; cin >> stud.var;
+            cout << "Kokia jo (jos) pavarde? "; cin >> stud.pav;
 
-    do {
-        int suma = 0, laik_paz;
-        Student stud;
-        cout << "Kuo vardu studentas(-e)?"; cin >> stud.var;
-        cout << "Kokia jo (jos) pavarde? "; cin >> stud.pav;
-
-        if (pasirinkimas == 1){
-            while(true) {
-                laik_paz = inputSkaicius("Iveskite namu darbo bala (0 baigti): ", 0, 10); 
-                if (laik_paz == 0) break;
-                
-                stud.paz.push_back(laik_paz);
-                suma += laik_paz;
+            if (ivestis == 1) {
+                while (true) {
+                    laik_paz = inputSkaicius("Iveskite namu darbo bala (0 baigti): ", 0, 10);
+                    if (laik_paz == 0) break;
+                    stud.paz.push_back(laik_paz);
+                    suma += laik_paz;
+                }
+                stud.egz = inputSkaicius("Koks egzamino ivertinimas? ", 1, 10);
+            } else {
+                int kiek = rand() % 10 + 1;
+                cout << "Sugeneruoti " << kiek << " namu darbu pazymiai: ";
+                for (int i = 0; i < kiek; i++) {
+                    int paz = rand() % 10 + 1;
+                    stud.paz.push_back(paz);
+                    suma += paz;
+                    cout << paz << " ";
+                }
+                cout << endl;
+                stud.egz = rand() % 10 + 1;
+                cout << "Sugeneruotas egzamino ivertinimas: " << stud.egz << endl;
             }
-            
-            stud.egz = inputSkaicius("Koks egzamino ivertinimas? ", 1, 10);
-        } else {
-            int kiek = rand() % 10 + 1;
-            cout << "Sugeneruoti " << kiek << " namu darbu pazymiai: ";
-            for (int i = 0; i < kiek; i++) {
-                int paz = rand() % 10 + 1;
-                stud.paz.push_back(paz);
-                suma += paz;
-                cout << paz << " ";
-            }
-            cout << endl;
-            stud.egz = rand() % 10 + 1; 
-            cout << "Sugeneruotas egzamino ivertinimas: " << stud.egz << endl;
-        }
-        
-        if (!stud.paz.empty()) {
-            stud.galVid = 0.4 * (double)suma / stud.paz.size() + 0.6 * stud.egz;
-            stud.galMed = 0.4 * skaiciuotiMediana(stud.paz) + 0.6 * stud.egz;
-        } else {
-            stud.galVid = 0.6 * stud.egz;
-            stud.galMed = 0.6 * stud.egz;
-        }
 
-        studentai.push_back(stud);
+            skaiciuotiGalutinius(stud);
+            studentai.push_back(stud);
 
-        cout << "Ar norite ivesti dar viena studenta? (t/n):";
-        cin >> testi;
-    } while(testi == 't' || testi == 'T');
- }
+            cout << "Ar norite ivesti dar viena studenta? (t/n): ";
+            cin >> testi;
+        } while (testi == 't' || testi == 'T');
+    }
 
     cout << setw(15) << left << "Pavarde"
          << setw(15) << left << "Vardas";
@@ -197,9 +247,10 @@ int main()
     cout << endl;
     cout << "--------------------------------------------------------------" << endl;
 
-    sort(studentai.begin(), studentai.end(), [](const Student& first, const Student& second){
+    sort(studentai.begin(), studentai.end(), [](const Student& first, const Student& second) {
         return first.pav < second.pav;
     });
+
     for (const auto& stud : studentai) {
         cout << setw(15) << left << stud.pav
              << setw(15) << left << stud.var;
@@ -211,7 +262,6 @@ int main()
             cout << setw(18) << left << fixed << setprecision(2) << stud.galVid;
             cout << setw(17) << left << fixed << setprecision(2) << stud.galMed;
         }
-
         cout << endl;
     }
 }
