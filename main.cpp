@@ -264,4 +264,33 @@ int main() {
         }
         cout << endl;
     }
+
+    vector<Student> vargsai;
+    vector<Student> kietakiai;
+
+    for (const auto& stud : studentai) {
+        double galutinis;
+        if (metodas == 1) galutinis = stud.galVid;
+        else if (metodas == 2) galutinis = stud.galMed;
+        else galutinis = stud.galVid; // jei abu – imame pagal vidurkį (galima pakeisti)
+
+        if (galutinis < 5.0)
+            vargsai.push_back(stud);
+        else
+            kietakiai.push_back(stud);
+    }
+
+    cout << "\n=== Vargsiukai (galutinis balas < 5.0) ===\n";
+    for (const auto& stud : vargsai) {
+        cout << setw(15) << left << stud.pav
+             << setw(15) << left << stud.var
+             << fixed << setprecision(2) << stud.galVid << endl;
+    }
+
+    cout << "\n=== Kietakiai (galutinis balas >= 5.0) ===\n";
+    for (const auto& stud : kietakiai) {
+        cout << setw(15) << left << stud.pav
+             << setw(15) << left << stud.var
+             << fixed << setprecision(2) << stud.galVid << endl;
+    }
 }
