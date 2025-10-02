@@ -1,5 +1,6 @@
-Pavarde        Vardas         Galutinis
-Jonaitis       Jonas          8.60
-Kazlauskas     Mantas         5.92
-Petrauskas     Petras         5.48
-Zukauskiene    Aiste          8.68
+Pavarde        Vardas         Galutinis (Vid.)  Galutinis (Med.) 
+-------------------------------------------------------
+Jonaitis       Jonas          8.60              8.60             
+Kazlauskas     Mantas         5.92              6.00             
+Petrauskas     Petras         5.48              5.40             
+Zukauskiene    Aiste          8.68              8.60             
