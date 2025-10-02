@@ -39,3 +39,7 @@
 
 # debug information files
 *.dwo
+
+# Generated student data files
+studentai*.txt
+data/

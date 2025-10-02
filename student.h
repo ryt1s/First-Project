@@ -1,6 +1,4 @@
-#ifndef STUDENT_H
-#define STUDENT_H
-
+#pragma once
 #include <vector>
 #include <string>
 
@@ -13,8 +11,6 @@ struct Student {
     double galMed;
 };
 
-// Funkcijos susijusios su studentais
+// Function declarations
 double skaiciuotiMediana(std::vector<int> paz);
 void skaiciuotiGalutinius(Student& stud);
-
-#endif
