@@ -293,4 +293,29 @@ int main() {
              << setw(15) << left << stud.var
              << fixed << setprecision(2) << stud.galVid << endl;
     }
+    ofstream foutV("vargsiukai.txt");
+    foutV << setw(15) << left << "Pavarde"
+          << setw(15) << left << "Vardas"
+          << "Galutinis" << endl;
+    for (const auto& stud : vargsai) {
+        foutV << setw(15) << left << stud.pav
+              << setw(15) << left << stud.var
+              << fixed << setprecision(2) 
+              << (metodas == 2 ? stud.galMed : stud.galVid) << endl;
+    }
+    foutV.close();
+
+    ofstream foutK("kietakiai.txt");
+    foutK << setw(15) << left << "Pavarde"
+          << setw(15) << left << "Vardas"
+          << "Galutinis" << endl;
+    for (const auto& stud : kietakiai) {
+        foutK << setw(15) << left << stud.pav
+              << setw(15) << left << stud.var
+              << fixed << setprecision(2) 
+              << (metodas == 2 ? stud.galMed : stud.galVid) << endl;
+    }
+    foutK.close();
+
+    cout << "\nRezultatai issaugoti i failus: vargsiukai.txt ir kietakiai.txt\n";
 }
