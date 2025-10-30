@@ -135,3 +135,14 @@ int inputSkaicius(const string& pranesimas, int min, int max) {
     }
     return value;
 }
+
+void nuskaitytiIsFailo(const string& filename, list<Student>& studentai) {
+    vector<Student> tmp;
+    nuskaitytiIsFailo(filename, tmp); 
+    studentai.assign(tmp.begin(), tmp.end());
+}
+
+void issaugotiIFaila(const string& filename, const list<Student>& studentai, int metod) {
+    vector<Student> tmp(studentai.begin(), studentai.end());
+    issaugotiIFaila(filename, tmp, metod);
+}
