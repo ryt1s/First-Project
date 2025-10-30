@@ -57,7 +57,8 @@ int main() {
     cin >> ivestis;
 
     string failas;
-    double t_read = 0.0;
+    int sortParam = 1, order = 1, metod = 1;
+    double t_read = 0.0, t_sort = 0.0, t_split = 0.0, t_write = 0.0;
 
     if (useList) { // 👈 LIST BRANCH 👈
     if (ivestis == 3) {
@@ -139,45 +140,63 @@ int main() {
             "2 - Mediana\n"
             "3 - Abu\n"
             "Jusu pasirinkimas: ";
-    int metod; 
     cin >> metod;
 
-    int sortParam = 1;
+    cin >> sortParam;
     if (metod == 3) {
         cout << "Pagal ka rusiuoti?\n1 - Vidurki\n2 - Mediana\n";
         cin >> sortParam;
     }
 
     cout << "Rikiuoti:\n1 - Didejanciai\n2 - Mazejanciai\n";
-    int order; cin >> order;
+    cin >> order;
 
+    if (useList) { 
     auto start_sort = high_resolution_clock::now();
-    sort(studentai.begin(), studentai.end(), [&](const Student &a, const Student &b) {
+    studentai_list.sort([&](const Student &a, const Student &b){
         double left = (sortParam == 2 ? a.galMed : a.galVid);
         double right = (sortParam == 2 ? b.galMed : b.galVid);
         return order == 1 ? left < right : left > right;
     });
-    auto end_sort = high_resolution_clock::now();
-    double t_sort = duration<double>(end_sort - start_sort).count();
+    t_sort = duration<double>(high_resolution_clock::now() - start_sort).count();
+} else {
+    auto start_sort = high_resolution_clock::now();
+    sort(studentai_vec.begin(), studentai_vec.end(), [&](const Student &a, const Student &b) {
+        double left = (sortParam == 2 ? a.galMed : a.galVid);
+        double right = (sortParam == 2 ? b.galMed : b.galVid);
+        return order == 1 ? left < right : left > right;
+    });
+    t_sort = duration<double>(high_resolution_clock::now() - start_sort).count();
+}
+
     cout << "Rikiavimas: " << t_sort << " s\n";
 
     auto start_split = high_resolution_clock::now();
     vargsiukai.clear();
     kietiakai.clear();
-    for (auto &s : studentai) {
+    if (useList) {
+    for (auto &s : studentai_list) {
         double gal = (sortParam == 2 ? s.galMed : s.galVid);
         if (gal < 5.0) vargsiukai.push_back(s);
         else kietiakai.push_back(s);
     }
+    } else { 
+        for (auto &s : studentai_vec) {
+            double gal = (sortParam == 2 ? s.galMed : s.galVid);
+            if (gal < 5.0) vargsiukai.push_back(s);
+            else kietiakai.push_back(s);
+        }
+    }
+
     auto end_split = high_resolution_clock::now();
-    double t_split = duration<double>(end_split - start_split).count();
+    t_split = duration<double>(end_split - start_split).count(); 
     cout << "Skirstymas i grupes: " << t_split << " s\n";
 
     auto start_write = high_resolution_clock::now();
     issaugotiIFaila("vargsiukai.txt", vargsiukai, metod);
     issaugotiIFaila("kietiakai.txt", kietiakai, metod);
     auto end_write = high_resolution_clock::now();
-    double t_write = duration<double>(end_write - start_write).count();
+    t_write = duration<double>(end_write - start_write).count();
     cout << "Isvedimas i failus: " << t_write << " s\n";
 
     auto printTime = [](double seconds) {
