@@ -15,9 +15,9 @@ using namespace chrono;
 int main() {
     srand(time(0));
 
-    vector<Student> studentai_vec; // New vector container
-    list<Student> studentai_list;  // New list container
-    vector<Student> vargsiukai, kietiakai; // Split result containers (always vectors for now)
+    vector<Student> studentai_vec;
+    list<Student> studentai_list; 
+    vector<Student> vargsiukai, kietiakai; 
     bool useList = false;
 
     cout << "Pasirinkite konteinerio tipa:\n1 - std::vector\n2 - std::list\nJusu pasirinkimas: ";
@@ -25,8 +25,6 @@ int main() {
     cin >> containerChoice;
     useList = (containerChoice == 2);
     cout << "Naudojamas konteineris: " << (useList ? "std::list" : "std::vector") << "\n";
-
-    vector<Student>& studentai = studentai_vec;
 
     cout << "Pasirinkite veiksma:\n"
             "1 - Ivesti / generuoti / nuskaityti studentus\n"
@@ -61,15 +59,12 @@ int main() {
     string failas;
     double t_read = 0.0;
 
+    if (useList) { // 👈 LIST BRANCH 👈
     if (ivestis == 3) {
-        cout << "Iveskite failo pavadinima: ";
-        cin >> failas;
-
+        cout << "Iveskite failo pavadinima: "; cin >> failas;
         auto start_read = high_resolution_clock::now();
-        nuskaitytiIsFailo(failas, studentai);
-        auto end_read = high_resolution_clock::now();
-        t_read = duration<double>(end_read - start_read).count();
-        cout << "Duomenu nuskaitymas: " << t_read << " s\n";
+        nuskaitytiIsFailo(failas, studentai_list); // Use list container
+        t_read = duration<double>(high_resolution_clock::now() - start_read).count();
     } else {
         char testi;
         do {
@@ -93,18 +88,51 @@ int main() {
                     stud.paz.push_back(nd);
                     cout << nd << " ";
                 }
-                cout << endl;
-                stud.egz = rand() % 10 + 1;
-                cout << "Egzamino ivertinimas: " << stud.egz << endl;
+                cout << "\nEgzamino ivertinimas: " << (stud.egz = rand() % 10 + 1) << endl;
             }
-
             skaiciuotiGalutinius(stud);
-            studentai.push_back(stud);
-
+            studentai_list.push_back(stud);
             cout << "Dar vienas? (t/n) "; cin >> testi;
         } while (testi == 't' || testi == 'T');
         failas = "manual_input";
     }
+} else {
+    if (ivestis == 3) {
+        cout << "Iveskite failo pavadinima: "; cin >> failas;
+        auto start_read = high_resolution_clock::now();
+        nuskaitytiIsFailo(failas, studentai_vec);
+        t_read = duration<double>(high_resolution_clock::now() - start_read).count();
+    } else {
+        char testi;
+        do {
+            Student stud;
+            cout << "Vardas: "; cin >> stud.var;
+            cout << "Pavarde: "; cin >> stud.pav;
+            if (ivestis == 1) {
+                int laik;
+                while (true) {
+                    laik = inputSkaicius("ND (0 baigti): ", 0, 10);
+                    if (laik == 0) break;
+                    stud.paz.push_back(laik);
+                }
+                stud.egz = inputSkaicius("Egzaminas: ", 1, 10);
+            } else {
+                int kiek = rand() % 10 + 1;
+                cout << "ND ivertinimai: ";
+                for (int i = 0; i < kiek; i++) {
+                    int nd = rand() % 10 + 1;
+                    stud.paz.push_back(nd);
+                    cout << nd << " ";
+                }
+                cout << "\nEgzamino ivertinimas: " << (stud.egz = rand() % 10 + 1) << endl;
+            }
+            skaiciuotiGalutinius(stud);
+            studentai_vec.push_back(stud);
+            cout << "Dar vienas? (t/n) "; cin >> testi;
+        } while (testi == 't' || testi == 'T');
+        failas = "manual_input";
+    }
+}
 
     cout << "Pasirinkite galutinio balo skaiciavimo metoda:\n"
             "1 - Vidurkis\n"
