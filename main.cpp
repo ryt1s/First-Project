@@ -179,14 +179,15 @@ int main() {
         double gal = (sortParam == 2 ? s.galMed : s.galVid);
         if (gal < 5.0) vargsiukai.push_back(s);
         else kietiakai.push_back(s);
-    }
-    } else { 
-        for (auto &s : studentai_vec) {
-            double gal = (sortParam == 2 ? s.galMed : s.galVid);
-            if (gal < 5.0) vargsiukai.push_back(s);
-            else kietiakai.push_back(s);
         }
-    }
+    } else { 
+        auto it = stable_partition(studentai_vec.begin(), studentai_vec.end(), [&](const Student& s) {
+        return (sortParam == 2 ? s.galMed : s.galVid) < 5.0;
+    });
+
+    vargsiukai.assign(studentai_vec.begin(), it);
+    kietiakai.assign(it, studentai_vec.end());
+}
 
     auto end_split = high_resolution_clock::now();
     t_split = duration<double>(end_split - start_split).count(); 
