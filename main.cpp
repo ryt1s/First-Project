@@ -7,13 +7,26 @@
 #include <algorithm>
 #include <string>
 #include <iomanip>
+#include <list>
 
 using namespace std;
 using namespace chrono;
 
 int main() {
     srand(time(0));
-    vector<Student> studentai;
+
+    vector<Student> studentai_vec; // New vector container
+    list<Student> studentai_list;  // New list container
+    vector<Student> vargsiukai, kietiakai; // Split result containers (always vectors for now)
+    bool useList = false;
+
+    cout << "Pasirinkite konteinerio tipa:\n1 - std::vector\n2 - std::list\nJusu pasirinkimas: ";
+    int containerChoice;
+    cin >> containerChoice;
+    useList = (containerChoice == 2);
+    cout << "Naudojamas konteineris: " << (useList ? "std::list" : "std::vector") << "\n";
+
+    vector<Student>& studentai = studentai_vec;
 
     cout << "Pasirinkite veiksma:\n"
             "1 - Ivesti / generuoti / nuskaityti studentus\n"
@@ -121,7 +134,8 @@ int main() {
     cout << "Rikiavimas: " << t_sort << " s\n";
 
     auto start_split = high_resolution_clock::now();
-    vector<Student> vargsiukai, kietiakai;
+    vargsiukai.clear();
+    kietiakai.clear();
     for (auto &s : studentai) {
         double gal = (sortParam == 2 ? s.galMed : s.galVid);
         if (gal < 5.0) vargsiukai.push_back(s);

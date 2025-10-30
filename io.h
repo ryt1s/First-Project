@@ -4,6 +4,7 @@
 #include "student.h"
 #include <vector>
 #include <string>
+#include <list>
 
 void nuskaitytiIsFailo(const std::string& filename, std::vector<Student>& studentai);
 void issaugotiIFaila(const std::string& filename, const std::vector<Student>& studentai, int metod);
