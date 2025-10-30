@@ -217,8 +217,7 @@ int main() {
     cout << "Skirstymas i grupes: "; printTime(t_split); cout << "\n";
     cout << "Isvedimas i failus: "; printTime(t_write); cout << "\n";
 
-    double t_total = t_read + t_sort + t_split + t_write;
-    cout << "Testavimo laikas: "; printTime(t_total); cout << "\n\n";
+    cout << "Testavimo laikas: "; printTime(t_read + t_sort + t_split + t_write); cout << "\n\n";
 
     return 0;
 }
