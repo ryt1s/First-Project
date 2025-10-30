@@ -58,10 +58,14 @@ int main() {
     double t_read = 0.0, t_sort = 0.0, t_split = 0.0, t_write = 0.0;
 
     auto printTime = [](double seconds) {
-        cout << fixed << setprecision(6);
-        if (seconds < 0.5) cout << seconds * 1000 << " ms";
-        else cout << seconds << " s";
-    };
+    cout << fixed << setprecision(6);
+    if (seconds < 0.5) {
+        cout << seconds * 1000 << " ms";
+    } else {
+        cout << seconds << " s";
+    }
+    cout << setprecision(2) << defaultfloat; 
+};
 
     if (useList) {
         if (ivestis == 3) {
