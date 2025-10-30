@@ -28,7 +28,10 @@ int main() {
     cout << "Naudojamas konteineris: " << (useList ? "std::list" : "std::vector") << "\n";
 
 
-    cout << "Pasirinkite veiksma:\n1 - Ivesti / generuoti / nuskaityti studentus\n2 - Sugeneruoti testinius failus\nJusu pasirinkimas: ";
+    cout << "Pasirinkite veiksma:" << endl;
+    cout << "1 - Ivesti / generuoti / nuskaityti studentus" << endl; 
+    cout << "2 - Sugeneruoti testinius failus" << endl; 
+    cout << "Jusu pasirinkimas: ";
     int pasirinkimas;
     cin >> pasirinkimas;
 

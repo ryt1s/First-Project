@@ -1,1 +1,2 @@
-Pavarde                  Vardas                   Galutinis (Vid.)Galutinis (Med.)
+Pavarde                  Vardas                   Galutinis      
+                                                  7.87           
