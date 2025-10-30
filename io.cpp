@@ -10,7 +10,7 @@
 using namespace std;
 using namespace std::chrono;
 
-// ------------------ GENERATOR ------------------
+
 void generuotiFaila(const string& filename, int kiekStudentu, int kiekNd) {
     ofstream fout(filename);
     if (!fout) {
@@ -18,14 +18,14 @@ void generuotiFaila(const string& filename, int kiekStudentu, int kiekNd) {
         return;
     }
 
-    // Header
+    
     fout << setw(20) << left << "Pavarde"
          << setw(20) << left << "Vardas";
     for (int i = 1; i <= kiekNd; i++)
         fout << setw(5) << ("ND" + to_string(i));
     fout << setw(10) << "Egzaminas" << "\n";
 
-    // Random student data
+   
     for (int i = 1; i <= kiekStudentu; i++) {
         string pav = "Pavarde" + to_string(i);
         string var = "Vardas" + to_string(i);
@@ -42,7 +42,7 @@ void generuotiFaila(const string& filename, int kiekStudentu, int kiekNd) {
     cout << "Sugeneruotas failas: " << filename << " (" << kiekStudentu << " irasu)\n";
 }
 
-// ------------------ FILE READING ------------------
+
 void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
     ifstream fin(filename);
     if (!fin) {
@@ -51,7 +51,7 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
     }
 
     string header;
-    getline(fin, header); // skip header
+    getline(fin, header); 
     string line;
 
     while (getline(fin, line)) {
@@ -59,7 +59,7 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
         istringstream iss(line);
         Student stud;
 
-        // Read surname and name separately
+      
         if (!(iss >> stud.pav >> stud.var)) continue;
 
         vector<int> paz;
@@ -76,7 +76,7 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
     }
 }
 
-// ------------------ FILE WRITING ------------------
+
 void issaugotiIFaila(const string& filename, const vector<Student>& studentai, int metod) {
     ofstream fout(filename);
     if (!fout) {
@@ -88,7 +88,6 @@ void issaugotiIFaila(const string& filename, const vector<Student>& studentai, i
     int varWidth = 25;
     int galWidth = 15;
 
-    // Header
     fout << setw(pavWidth) << left << "Pavarde"
          << setw(varWidth) << left << "Vardas";
     if (metod == 3) {

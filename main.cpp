@@ -91,6 +91,7 @@ int main() {
                     cout << "\nEgzamino ivertinimas: " << (stud.egz = rand() % 10 + 1) << endl;
                 }
                 skaiciuotiGalutinius(stud);
+                cout << "Objekto atminties adresas: " << &stud << endl;
                 studentai_list.push_back(stud);
                 cout << "Dar vienas? (t/n) "; cin >> testi;
             } while (testi == 't' || testi == 'T');
@@ -127,6 +128,7 @@ int main() {
                     cout << "\nEgzamino ivertinimas: " << (stud.egz = rand() % 10 + 1) << endl;
                 }
                 skaiciuotiGalutinius(stud);
+                cout << "Objekto atminties adresas: " << &stud << endl;
                 studentai_vec.push_back(stud);
                 cout << "Dar vienas? (t/n) "; cin >> testi;
             } while (testi == 't' || testi == 'T');
