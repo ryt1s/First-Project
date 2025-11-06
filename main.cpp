@@ -14,7 +14,18 @@
 using namespace std;
 using namespace chrono;
 
+// Pridėti šią funkciją virš main()
+void runStrategyTest(
+    int containerChoice, int splitStrategy, int sortParam, int order, int metod, 
+    const std::string& failas, std::vector<Student> original_vec, std::list<Student> original_list) 
+{
+    // ... VISAS JŪSŲ RIKIAVIMO, SKIRSTYMO IR RAŠYMO KODAS ...
+    // ... (pradedant nuo t_sort, t_split, t_write skaičiavimo)
+    // ... (baigiant spausdinimu į konsolę)
+}
+
 int main() {
+
     srand(time(0));
 
     vector<Student> studentai_vec;

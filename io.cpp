@@ -77,41 +77,53 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
 }
 
 
-void issaugotiIFaila(const string& filename, const vector<Student>& studentai, int metod) {
-    ofstream fout(filename);
-    if (!fout) {
-        cerr << "Nepavyko sukurti failo: " << filename << endl;
-        return;
-    }
+void issaugotiIFaila(const string& filename, const vector<Student>& students, int metod) {
+    // Naudojame std::ios::trunc, kad perrašytumėme failą
+    std::ofstream fout(filename, std::ios::out | std::ios::trunc); 
+    if (!fout.is_open()) return;
 
-    int pavWidth = 25;
-    int varWidth = 25;
-    int galWidth = 15;
-
-    fout << setw(pavWidth) << left << "Pavarde"
-         << setw(varWidth) << left << "Vardas";
+    // Antraštės formatavimas (naudojamas lėtas, bet patikimas stream)
+    fout << setw(25) << left << "Pavarde"
+         << setw(25) << left << "Vardas";
     if (metod == 3) {
-        fout << setw(galWidth) << left << "Galutinis (Vid.)"
-             << setw(galWidth) << left << "Galutinis (Med.)";
+        fout << setw(15) << left << "Galutinis (Vid.)"
+             << setw(15) << left << "Galutinis (Med.)";
     } else {
-        fout << setw(galWidth) << left << "Galutinis";
+        fout << setw(15) << left << "Galutinis";
     }
-    fout << endl;
+    fout << "\n"; // Naudojame \n, nes fstream naudoja buferius
 
-    for (const auto& stud : studentai) {
-        fout << setw(pavWidth) << left << stud.pav
-             << setw(varWidth) << left << stud.var;
+    // Bufferio nustatymas (jūsų optimizacija)
+    std::string buffer;
+    buffer.reserve(1 << 20);  // ~1MB initial buffer
+    const size_t FLUSH_THRESHOLD = (1 << 20); // 1MB
 
+    for (const auto &s : students) {
+        char line[256];
+        int n = 0;
+        
         if (metod == 3) {
-            fout << setw(galWidth) << left << fixed << setprecision(2) << stud.galVid
-                 << setw(galWidth) << left << fixed << setprecision(2) << stud.galMed;
+             n = std::snprintf(line, sizeof(line),
+                               "%-25s %-25s %15.2f %15.2f\n",
+                               s.pav.c_str(), s.var.c_str(), s.galVid, s.galMed);
         } else {
-            double gal = (metod == 1 ? stud.galVid : stud.galMed);
-            fout << setw(galWidth) << left << fixed << setprecision(2) << gal;
+            double galutinis = (metod == 1 ? s.galVid : s.galMed);
+             n = std::snprintf(line, sizeof(line),
+                               "%-25s %-25s %15.2f\n",
+                               s.pav.c_str(), s.var.c_str(), galutinis);
         }
+        
+        buffer.append(line, n);
 
-        fout << endl;
+        if (buffer.size() > FLUSH_THRESHOLD) { // flush every ~1MB
+            fout.write(buffer.data(), buffer.size());
+            buffer.clear();
+        }
     }
+    // Išvalyti likusį buferį
+    if (!buffer.empty()) fout.write(buffer.data(), buffer.size());
+    
+    fout.close();
 }
 
 // ------------------ SAFE INPUT ------------------
@@ -167,39 +179,51 @@ void nuskaitytiIsFailo(const string& filename, list<Student>& studentai) {
     }
 }
 
-void issaugotiIFaila(const string& filename, const list<Student>& studentai, int metod) {
-    ofstream fout(filename);
-    if (!fout) {
-        cerr << "Nepavyko sukurti failo: " << filename << endl;
-        return;
-    }
+void issaugotiIFaila(const string& filename, const list<Student>& students, int metod) {
+    // Naudojame std::ios::trunc, kad perrašytumėme failą
+    std::ofstream fout(filename, std::ios::out | std::ios::trunc);
+    if (!fout.is_open()) return;
 
-    int pavWidth = 25;
-    int varWidth = 25;
-    int galWidth = 15;
-
-    fout << setw(pavWidth) << left << "Pavarde"
-         << setw(varWidth) << left << "Vardas";
+    // Antraštės formatavimas
+    fout << setw(25) << left << "Pavarde"
+         << setw(25) << left << "Vardas";
     if (metod == 3) {
-        fout << setw(galWidth) << left << "Galutinis (Vid.)"
-             << setw(galWidth) << left << "Galutinis (Med.)";
+        fout << setw(15) << left << "Galutinis (Vid.)"
+             << setw(15) << left << "Galutinis (Med.)";
     } else {
-        fout << setw(galWidth) << left << "Galutinis";
+        fout << setw(15) << left << "Galutinis";
     }
-    fout << endl;
+    fout << "\n";
 
-    for (const auto& stud : studentai) {
-        fout << setw(pavWidth) << left << stud.pav
-             << setw(varWidth) << left << stud.var;
+    // Bufferio nustatymas (jūsų optimizacija)
+    std::string buffer;
+    buffer.reserve(1 << 20); // ~1MB initial buffer
+    const size_t FLUSH_THRESHOLD = (1 << 20); // 1MB
 
+    for (const auto &s : students) {
+        char line[256];
+        int n = 0;
+        
         if (metod == 3) {
-            fout << setw(galWidth) << left << fixed << setprecision(2) << stud.galVid
-                 << setw(galWidth) << left << fixed << setprecision(2) << stud.galMed;
+             n = std::snprintf(line, sizeof(line),
+                               "%-25s %-25s %15.2f %15.2f\n",
+                               s.pav.c_str(), s.var.c_str(), s.galVid, s.galMed);
         } else {
-            double gal = (metod == 1 ? stud.galVid : stud.galMed);
-            fout << setw(galWidth) << left << fixed << setprecision(2) << gal;
+            double galutinis = (metod == 1 ? s.galVid : s.galMed);
+             n = std::snprintf(line, sizeof(line),
+                               "%-25s %-25s %15.2f\n",
+                               s.pav.c_str(), s.var.c_str(), galutinis);
         }
+        
+        buffer.append(line, n);
 
-        fout << endl;
+        if (buffer.size() > FLUSH_THRESHOLD) { // flush every ~1MB
+            fout.write(buffer.data(), buffer.size());
+            buffer.clear();
+        }
     }
+    // Išvalyti likusį buferį
+    if (!buffer.empty()) fout.write(buffer.data(), buffer.size());
+    
+    fout.close();
 }
