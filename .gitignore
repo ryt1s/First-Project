@@ -41,7 +41,7 @@
 *.dwo
 
 # Generated student data files
-studentai*.txt
+studentai_*.txt
 vargsiukai.txt
 kietakiai.txt
 data/

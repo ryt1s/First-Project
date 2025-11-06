@@ -136,12 +136,70 @@ int inputSkaicius(const string& pranesimas, int min, int max) {
 }
 
 void nuskaitytiIsFailo(const string& filename, list<Student>& studentai) {
-    vector<Student> tmp;
-    nuskaitytiIsFailo(filename, tmp); 
-    studentai.assign(tmp.begin(), tmp.end());
+    ifstream fin(filename);
+    if (!fin) {
+        cerr << "Nepavyko atidaryti failo: " << filename << endl;
+        return;
+    }
+
+    string header;
+    getline(fin, header); 
+    string line;
+
+    while (getline(fin, line)) {
+        if (line.empty()) continue;
+        istringstream iss(line);
+        Student stud;
+
+        if (!(iss >> stud.pav >> stud.var)) continue;
+
+        vector<int> paz;
+        int balas;
+        while (iss >> balas) paz.push_back(balas);
+
+        if (paz.empty()) continue;
+
+        stud.egz = paz.back(); paz.pop_back();
+        stud.paz = paz;
+
+        skaiciuotiGalutinius(stud);
+        studentai.push_back(stud); 
+    }
 }
 
 void issaugotiIFaila(const string& filename, const list<Student>& studentai, int metod) {
-    vector<Student> tmp(studentai.begin(), studentai.end());
-    issaugotiIFaila(filename, tmp, metod);
+    ofstream fout(filename);
+    if (!fout) {
+        cerr << "Nepavyko sukurti failo: " << filename << endl;
+        return;
+    }
+
+    int pavWidth = 25;
+    int varWidth = 25;
+    int galWidth = 15;
+
+    fout << setw(pavWidth) << left << "Pavarde"
+         << setw(varWidth) << left << "Vardas";
+    if (metod == 3) {
+        fout << setw(galWidth) << left << "Galutinis (Vid.)"
+             << setw(galWidth) << left << "Galutinis (Med.)";
+    } else {
+        fout << setw(galWidth) << left << "Galutinis";
+    }
+    fout << endl;
+
+    for (const auto& stud : studentai) {
+        fout << setw(pavWidth) << left << stud.pav
+             << setw(varWidth) << left << stud.var;
+
+        if (metod == 3) {
+            fout << setw(galWidth) << left << fixed << setprecision(2) << stud.galVid
+                 << setw(galWidth) << left << fixed << setprecision(2) << stud.galMed;
+        } else {
+            double gal = (metod == 1 ? stud.galVid : stud.galMed);
+            fout << setw(galWidth) << left << fixed << setprecision(2) << gal;
+        }
+
+        fout << endl;
+    }
 }
