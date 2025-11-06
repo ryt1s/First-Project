@@ -82,18 +82,37 @@
 
 ### Windows su CMake  
 
-1. Atidaryti PowerShell ir eiti į projekto katalogą:  
+## 🧩 Naudojimosi ir diegimo instrukcija
 
-```powershell
-cd C:\Users\rytis\Desktop\c++\First-Project
-mkdir build
-cd build
-cmake ..
-cmake --build . --config Debug
-.\Debug\student_split.exe
-cd C:\Users\rytis\Desktop\c++\First-Project
+Atsisiųskite projektą iš GitHub:
+   ```bash
+   git clone https://github.com/<jusu_vartotojas>/<projektas>.git
 ```
+Įeikite į projekto aplanką:
 
+```bash
+cd First-Project
+```
+Sukurkite naują aplanką build ir jį atidarykite:
+
+```bash
+mkdir build && cd build
+```
+Sugeneruokite projektą su CMake:
+
+```bash
+cmake ..
+```
+Sukompiliuokite programą:
+
+```bash
+cmake --build .
+```
+Paleiskite programą:
+
+```bash
+./main
+```
 ## **4. Vizualūs rezultatai**
 
 ### Skaičiavimo pavyzdžiai naudojant *Vector* konteinerius:
