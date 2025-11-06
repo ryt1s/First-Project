@@ -42,7 +42,7 @@
 
 # Generated student data files
 studentai_*.txt
-vargsiukai.txt
-kietiakiai.txt
 data/
 build/
+kursiokai.txt
+.vscode/

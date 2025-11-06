@@ -78,11 +78,9 @@ void nuskaitytiIsFailo(const string& filename, vector<Student>& studentai) {
 
 
 void issaugotiIFaila(const string& filename, const vector<Student>& students, int metod) {
-    // Naudojame std::ios::trunc, kad perrašytumėme failą
     std::ofstream fout(filename, std::ios::out | std::ios::trunc); 
     if (!fout.is_open()) return;
 
-    // Antraštės formatavimas (naudojamas lėtas, bet patikimas stream)
     fout << setw(25) << left << "Pavarde"
          << setw(25) << left << "Vardas";
     if (metod == 3) {
@@ -91,12 +89,11 @@ void issaugotiIFaila(const string& filename, const vector<Student>& students, in
     } else {
         fout << setw(15) << left << "Galutinis";
     }
-    fout << "\n"; // Naudojame \n, nes fstream naudoja buferius
+    fout << "\n";
 
-    // Bufferio nustatymas (jūsų optimizacija)
     std::string buffer;
-    buffer.reserve(1 << 20);  // ~1MB initial buffer
-    const size_t FLUSH_THRESHOLD = (1 << 20); // 1MB
+    buffer.reserve(1 << 20);
+    const size_t FLUSH_THRESHOLD = (1 << 20);
 
     for (const auto &s : students) {
         char line[256];
@@ -115,18 +112,16 @@ void issaugotiIFaila(const string& filename, const vector<Student>& students, in
         
         buffer.append(line, n);
 
-        if (buffer.size() > FLUSH_THRESHOLD) { // flush every ~1MB
+        if (buffer.size() > FLUSH_THRESHOLD) {
             fout.write(buffer.data(), buffer.size());
             buffer.clear();
         }
     }
-    // Išvalyti likusį buferį
     if (!buffer.empty()) fout.write(buffer.data(), buffer.size());
     
     fout.close();
 }
 
-// ------------------ SAFE INPUT ------------------
 int inputSkaicius(const string& pranesimas, int min, int max) {
     int value;
     while (true) {
@@ -180,11 +175,9 @@ void nuskaitytiIsFailo(const string& filename, list<Student>& studentai) {
 }
 
 void issaugotiIFaila(const string& filename, const list<Student>& students, int metod) {
-    // Naudojame std::ios::trunc, kad perrašytumėme failą
     std::ofstream fout(filename, std::ios::out | std::ios::trunc);
     if (!fout.is_open()) return;
 
-    // Antraštės formatavimas
     fout << setw(25) << left << "Pavarde"
          << setw(25) << left << "Vardas";
     if (metod == 3) {
@@ -195,10 +188,9 @@ void issaugotiIFaila(const string& filename, const list<Student>& students, int 
     }
     fout << "\n";
 
-    // Bufferio nustatymas (jūsų optimizacija)
     std::string buffer;
-    buffer.reserve(1 << 20); // ~1MB initial buffer
-    const size_t FLUSH_THRESHOLD = (1 << 20); // 1MB
+    buffer.reserve(1 << 20);
+    const size_t FLUSH_THRESHOLD = (1 << 20);
 
     for (const auto &s : students) {
         char line[256];
@@ -217,12 +209,11 @@ void issaugotiIFaila(const string& filename, const list<Student>& students, int 
         
         buffer.append(line, n);
 
-        if (buffer.size() > FLUSH_THRESHOLD) { // flush every ~1MB
+        if (buffer.size() > FLUSH_THRESHOLD) {
             fout.write(buffer.data(), buffer.size());
             buffer.clear();
         }
     }
-    // Išvalyti likusį buferį
     if (!buffer.empty()) fout.write(buffer.data(), buffer.size());
     
     fout.close();
