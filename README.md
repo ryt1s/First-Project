@@ -113,7 +113,43 @@ Paleiskite programą:
 ```bash
 ./main
 ```
-## **4. Vizualūs rezultatai**
+
+## 5. Programos Veikimo Žingsniai
+
+###  Pasirinkti konteinerio tipą:
+- `1` – `std::vector`
+- `2` – `std::list`
+
+###  Pasirinkti veiksmą:
+- `1` – Įvesti / generuoti / nuskaityti studentus
+- `2` – Sugeneruoti testinius failus
+
+###  Jei pasirinktas duomenų įvedimas:
+- Rankinis įvedimas arba atsitiktinis generavimas
+- Nuskaitymas iš failo (`studentai_*.txt`)
+
+###  Pasirinkti galutinio balo skaičiavimo metodą:
+- `1` – Vidurkis
+- `2` – Mediana
+- `3` – Abu (leidžia pasirinkti pagal ką rūšiuoti)
+
+###  Pasirinkti rūšiavimo tvarką:
+- `1` – Didėjimo
+- `2` – Mažėjimo
+
+###  Pasirinkti studentų skirstymo strategiją:
+- `1` – Kopijavimas į du naujus konteinerius
+- `2` – Kopijavimas + trynimas / perkėlimas
+- `3` – Efektyviausias (`Partition` / `Splice` + `Move`)
+
+### ⏱️ Programoje bus parodytas laikas kiekvienam veiksmui:
+- Duomenų nuskaitymas (`T_read`)
+- Rikiavimas (`T_sort`)
+- Skirstymas į grupes (`T_split`)
+- Įrašymas į failus (`T_write`)
+
+
+## **6. Vizualūs rezultatai**
 
 ### Skaičiavimo pavyzdžiai naudojant *Vector* konteinerius:
 
@@ -135,7 +171,7 @@ Paleiskite programą:
 
 ---
 
-## 5. Apibendrinimas
+## 7. Apibendrinimas
 
 Atliktas eksperimentas parodė, kad:
 
