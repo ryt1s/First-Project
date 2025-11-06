@@ -211,7 +211,16 @@ int main() {
             // 3. Kietiakai liko studentai_list. Perkeliame (MOVE) juos į galutinį vector konteinerį.
             kietiakai.assign(make_move_iterator(studentai_list.begin()), make_move_iterator(studentai_list.end()));
         } else {
+            list<Student> good_students;
+            // 1. stable_partition atskiria vargšiukus nuo kietiakų studentai_list konteineryje
+            auto it = stable_partition(studentai_list.begin(), studentai_list.end(), isVargsiukas);
             
+            // 2. list::splice() perkelia kietiakų elementus į good_students per O(1) operacijas
+            good_students.splice(good_students.begin(), studentai_list, it, studentai_list.end()); 
+            
+            // 3. Perduodame (MOVE) LIST turinį į galutinius VECTOR konteinerius.
+            vargsiukai.assign(make_move_iterator(studentai_list.begin()), make_move_iterator(studentai_list.end()));
+            kietiakai.assign(make_move_iterator(good_students.begin()), make_move_iterator(good_students.end()));
         }
 
         // list<Student> good_students;
@@ -242,10 +251,12 @@ int main() {
             // 3. Kietiakai liko studentai_vec. Perkeliami (MOVE) į kietiakai
             kietiakai.assign(make_move_iterator(studentai_vec.begin()), make_move_iterator(studentai_vec.end()));
         } else {
-            // 3 STRATEGIJOS kodas (kol kas paliekame 1 strategijos logiką)
-            auto it = stable_partition(studentai_vec.begin(), studentai_vec.end(), isVargsiukas);
-            vargsiukai.assign(studentai_vec.begin(), it);
-            kietiakai.assign(it, studentai_vec.end());
+            // Naudojame nestabilų partition – greitesnis dalijimas vietoje!
+            auto it = partition(studentai_vec.begin(), studentai_vec.end(), isVargsiukas);
+                  
+            // Perduodame (MOVE) studentus į galutinius vector konteinerius be kopijavimo
+            vargsiukai.assign(make_move_iterator(studentai_vec.begin()), make_move_iterator(it));
+            kietiakai.assign(make_move_iterator(it), make_move_iterator(studentai_vec.end()));
         }
     }
 
