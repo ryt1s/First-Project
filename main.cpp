@@ -191,14 +191,41 @@ int main() {
     kietiakai.clear();
 
     if (useList) {
-        list<Student> good_students;
-        auto it = stable_partition(studentai_list.begin(), studentai_list.end(), [&](const Student& s) {
-            return (sortParam == 2 ? s.galMed : s.galVid) < 5.0;
-        });
-        good_students.splice(good_students.begin(), studentai_list, it, studentai_list.end());
 
-        vargsiukai.assign(studentai_list.begin(), studentai_list.end());
-        kietiakai.assign(good_students.begin(), good_students.end());
+        auto start_split = high_resolution_clock::now();
+        vargsiukai.clear();
+        kietiakai.clear();
+
+        if (splitStrategy == 1) {
+            list<Student> good_students;
+            auto it = stable_partition(studentai_list.begin(), studentai_list.end(), isVargsiukas);
+            good_students.splice(good_students.begin(), studentai_list, it, studentai_list.end());
+
+            vargsiukai.assign(studentai_list.begin(), studentai_list.end()); // Kopijavimas
+            kietiakai.assign(good_students.begin(), good_students.end());
+        }
+
+        else if (splitStrategy == 2) {
+            // 1. Išsaugome vargšiukus (kopijuojame)
+            copy_if(studentai_list.begin(), studentai_list.end(), back_inserter(vargsiukai), isVargsiukas);
+            
+            // 2. Pašaliname vargšiukus iš pagrindinės list talpyklos (list::remove_if yra O(N))
+            studentai_list.remove_if(isVargsiukas); 
+            
+            // 3. Kietiakai liko studentai_list. Perkeliame (MOVE) juos į galutinį vector konteinerį.
+            kietiakai.assign(make_move_iterator(studentai_list.begin()), make_move_iterator(studentai_list.end()));
+        } else {
+            
+        }
+
+        // list<Student> good_students;
+        // auto it = stable_partition(studentai_list.begin(), studentai_list.end(), [&](const Student& s) {
+        //     return (sortParam == 2 ? s.galMed : s.galVid) < 5.0;
+        // });
+        // good_students.splice(good_students.begin(), studentai_list, it, studentai_list.end());
+
+        // vargsiukai.assign(studentai_list.begin(), studentai_list.end());
+        // kietiakai.assign(good_students.begin(), good_students.end());
 
     } else {
         auto it = stable_partition(studentai_vec.begin(), studentai_vec.end(), [&](const Student& s) {
