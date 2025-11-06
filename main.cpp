@@ -192,10 +192,6 @@ int main() {
 
     if (useList) {
 
-        auto start_split = high_resolution_clock::now();
-        vargsiukai.clear();
-        kietiakai.clear();
-
         if (splitStrategy == 1) {
             list<Student> good_students;
             auto it = stable_partition(studentai_list.begin(), studentai_list.end(), isVargsiukas);
@@ -228,12 +224,29 @@ int main() {
         // kietiakai.assign(good_students.begin(), good_students.end());
 
     } else {
-        auto it = stable_partition(studentai_vec.begin(), studentai_vec.end(), [&](const Student& s) {
-            return (sortParam == 2 ? s.galMed : s.galVid) < 5.0;
-        });
+        // 1 STRATEGIJA: Kopijavimas
+        if (splitStrategy == 1) {
+            auto it = stable_partition(studentai_vec.begin(), studentai_vec.end(), isVargsiukas);
 
-        vargsiukai.assign(studentai_vec.begin(), it);
-        kietiakai.assign(it, studentai_vec.end());
+            vargsiukai.assign(studentai_vec.begin(), it);
+            kietiakai.assign(it, studentai_vec.end());
+        } 
+        // 2 STRATEGIJA: Trynimas (Vector)
+        else if (splitStrategy == 2) {
+            // 1. Išsaugome vargšiukus (kopijuojame)
+            copy_if(studentai_vec.begin(), studentai_vec.end(), back_inserter(vargsiukai), isVargsiukas);
+            
+            // 2. Pašaliname vargšiukus (Erase-Remove Idioma)
+            studentai_vec.erase(remove_if(studentai_vec.begin(), studentai_vec.end(), isVargsiukas), studentai_vec.end());
+            
+            // 3. Kietiakai liko studentai_vec. Perkeliami (MOVE) į kietiakai
+            kietiakai.assign(make_move_iterator(studentai_vec.begin()), make_move_iterator(studentai_vec.end()));
+        } else {
+            // 3 STRATEGIJOS kodas (kol kas paliekame 1 strategijos logiką)
+            auto it = stable_partition(studentai_vec.begin(), studentai_vec.end(), isVargsiukas);
+            vargsiukai.assign(studentai_vec.begin(), it);
+            kietiakai.assign(it, studentai_vec.end());
+        }
     }
 
     auto end_split = high_resolution_clock::now();
