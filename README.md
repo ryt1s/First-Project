@@ -1,72 +1,118 @@
-# **Programos spartos analizė**
+# Studentų Duomenų Valdymo Tyrimas ir Spartos Optimizacija  
+Šis projektas analizuoja studentų duomenų apdorojimo (nuskaitymo, rūšiavimo ir skirstymo) spartą, lyginant **std::vector** ir **std::list** konteinerius. Ypatingas dėmesys skirtas duomenų skirstymo **T_split** strategijų palyginimui bei I/O operacijų optimizacijai.
 
-Šioje ataskaitoje pateikiama analizė, lyginanti, kaip efektyviai veikia du skirtingi duomenų konteineriai – **Vector** ir **List** – apdorojant didelius studentų duomenų kiekius C++ kalboje.  
-**Vector** tinkamesnis, kai duomenys išdėstyti nuosekliai atmintyje, o **List** – kai duomenys išsidėstę neapibrėžtai ar dažnai kinta jų tvarka.
+## 1. Testavimo sistemos parametrai
 
----
+| Parametras | Reikšmė |
+|------------|---------|
+| Procesorius (CPU) | AMD Ryzen 7 8845HS w/ Radeon 780M Graphics 3.80 GHz |
+| Operatyvioji atmintis (RAM) | 16 GB DDR4 |
+| Duomenų saugykla (SSD) | 954 GB NVMe SSD |
+| Operacinė sistema | Windows 11 |
 
-## **1. Testavimo sistemos parametrai**
+## 2. Split strategijų palyginimas  
 
-Visi testai atlikti naudojant tuos pačius duomenų failus. Lentelėse pateikti rezultatai gauti iš vieno bandymo, kuris atspindi vidutines reikšmes.
+### 2.1. Kodo optimacijos santrauka  
 
-| **Parametras** | **Reikšmė** |
-| :--- | :--- |
-| **Procesorius (CPU)** | AMD Ryzen 7 8845HS w/ Radeon 780M Graphics 3.80 GHz |
-| **Operatyvioji atmintis (RAM)** | 16 GB DDR4 |
-| **Duomenų saugykla (SSD)** | 954 GB NVMe SSD |
-| **Operacinė sistema** | Windows 11 |
+* **Strategija 1 – Kopijavimas į du naujus konteinerius:** lėčiausia, daug atminties reikalaujanti operacija.  
+* **Strategija 2 – Kopijavimas + Trynimas/Perkėlimas:** efektyvesnė atminties atžvilgiu, tačiau `vector` konteineryje dideliam kiekiui duomenų trynimai sulėtina operaciją.  
+* **Strategija 3 – Efektyviausias (Partition / Splice + Move):** `vector` naudoja `partition` + `move`, `list` naudoja `splice`, greičiausia operacija abiem konteinerių tipams.  
+* **I/O optimizacija:** `T_write` greitis pagerintas naudojant buferizuotą įrašymą.
 
----
+### 2.2. Strategija 1: Kopijavimas į du naujus konteinerius
 
-## **2. Konteinerių testavimo rezultatai**
+| Konteineris | Dydis (N) | T_read (s) | T_sort (s) | T_split (s) | T_write (s) | T_total (s) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Vector** | 1 000 | 0.00426 | 0.00209 | 0.00068 | 0.06206 | 0.06908 |
+| **Vector** | 10 000 | 0.03108 | 0.02259 | 0.00769 | 0.01211 | 0.07349 |
+| **Vector** | 100 000 | 0.25818 | 0.30211 | 0.06270 | 0.09579 | 0.71878 |
+| **Vector** | 1 000 000 | 2.71694 | 4.02959 | 0.63888 | 0.90804 | 8.29345 |
+| **Vector** | 10 000 000 | 27.65686 | 48.48721 | 6.51016 | 8.68069 | 91.33493 |
+| **List** | 1 000 | 0.00288 | 0.00034 | 0.00074 | 0.00268 | 0.00663 |
+| **List** | 10 000 | 0.02849 | 0.00439 | 0.00793 | 0.01251 | 0.05332 |
+| **List** | 100 000 | 0.25659 | 0.05682 | 0.11861 | 0.08181 | 0.51382 |
+| **List** | 1 000 000 | 2.49096 | 1.00429 | 1.52834 | 1.02963 | 6.05321 |
+| **List** | 10 000 000 | 24.86786 | 16.79915 | 14.62552 | 8.95766 | 65.25019 |
 
-Laikai matuojami sekundėmis (s).  
+### 2.3. Strategija 2: Kopijavimas + Trynimas / Perkėlimas
 
-### **2.1. Vector konteinerio rezultatai(sekundėmis)**
+| Konteineris | Dydis (N) | T_read (s) | T_sort (s) | T_split (s) | T_write (s) | T_total (s) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Vector** | 1 000 | 0.00292 | 0.00181 | 0.00047 | 0.00218 | 0.00738 |
+| **Vector** | 10 000 | 0.02950 | 0.02318 | 0.00575 | 0.01168 | 0.07011 |
+| **Vector** | 100 000 | 0.26064 | 0.31049 | 0.06289 | 0.09018 | 0.72420 |
+| **Vector** | 1 000 000 | 2.51366 | 3.88816 | 0.51577 | 0.88671 | 7.80429 |
+| **Vector** | 10 000 000 | 25.75138 | 47.59537 | 4.99176 | 8.75401 | 87.09252 |
+| **List** | 1 000 | 0.00389 | 0.00036 | 0.00042 | 0.00219 | 0.00686 |
+| **List** | 10 000 | 0.02945 | 0.00399 | 0.00603 | 0.01284 | 0.05231 |
+| **List** | 100 000 | 0.25477 | 0.05964 | 0.07157 | 0.08752 | 0.47349 |
+| **List** | 1 000 000 | 2.59597 | 0.88101 | 0.78605 | 0.88448 | 5.14752 |
+| **List** | 10 000 000 | 24.77863 | 13.74636 | 8.18777 | 8.80382 | 55.51657 |
 
-| Įrašų skaičius | Nuskaitymas ($T_{read}$) | Rūšiavimas ($T_{sort}$) | Skirstymas ($T_{split}$) | Įrašymas ($T_{write}$) | Bendrai ($T_{total}$) |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| 1 000 | 0.0039 | 0.0023 | 0.0007 | 0.0294 | 0.0364 |
-| 10 000 | 0.0401 | 0.0338 | 0.0066 | 0.0812 | 0.1613 |
-| 100 000 | 0.3429 | 0.3952 | 0.0694 | 0.9813 | 1.7881 |
-| 1 000 000 | 3.3160 | 5.1291 | 0.6863 | 6.7519 | 15.8832 |
-| **10 000 000** | 37.3213 | **63.8957** | 6.5353 | 61.8754 | **169.6276** |
+### 2.4. Strategija 3: Efektyviausias (Partition / Splice + Move)
 
-### **2.2. List konteinerio rezultatai(sekundėmis)**
+| Konteineris | Dydis (N) | T_read (s) | T_sort (s) | T_split (s) | T_write (s) | T_total (s) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Vector** | 1 000 | 0.00298 | 0.00182 | 0.00019 | 0.00275 | 0.00774 |
+| **Vector** | 10 000 | 0.02840 | 0.02109 | 0.00128 | 0.01294 | 0.06371 |
+| **Vector** | 100 000 | 0.24466 | 0.30531 | 0.01462 | 0.10187 | 0.66645 |
+| **Vector** | 1 000 000 | 2.43081 | 3.90824 | 0.15274 | 0.89834 | 7.39013 |
+| **Vector** | 10 000 000 | 26.17001 | 47.83257 | 1.44954 | 8.55936 | 84.01148 |
+| **List** | 1 000 | 0.00288 | 0.00033 | 0.00056 | 0.00239 | 0.00615 |
+| **List** | 10 000 | 0.02703 | 0.00392 | 0.01166 | 0.01557 | 0.05818 |
+| **List** | 100 000 | 0.24459 | 0.05735 | 0.09747 | 0.08525 | 0.48504 |
+| **List** | 1 000 000 | 2.54623 | 0.85054 | 1.16016 | 0.89102 | 5.44795 |
+| **List** | 10 000 000 | 24.70927 | 13.29820 | 12.20798 | 8.54048 | 58.75593 |
 
-| Įrašų skaičius | Nuskaitymas ($T_{read}$) | Rūšiavimas ($T_{sort}$) | Skirstymas ($T_{split}$) | Įrašymas ($T_{write}$) | Bendrai ($T_{total}$) |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| 1 000 | 0.0046 | 0.0005 | 0.0119 | 0.0120 | 0.0180 |
-| 10 000 | 0.0482 | 0.0053 | 0.0142 | 0.0946 | 0.1623 |
-| 100 000 | 0.4479 | 0.0851 | 0.1586 | 0.9265 | 1.6181 |
-| 1 000 000 | 4.3109 | **1.4320** | 1.6987 | 8.8138 | 16.2555 |
-| **10 000 000** | 44.4090 | **16.8583** | 19.4405 | 72.2258 | **152.9336** |
+## 3. Galutinės išvados
 
----
+1. **Strategijos efektyvumas (Vector):**  
+   - Strategija 1 yra lėčiausia dėl dvigubo kopijavimo.  
+   - Strategija 2 gerina atminties naudojimą, tačiau trynimai su `vector` dideliam kiekiui studentų lėtina veikimą.  
+   - Strategija 3 – optimaliausia: `partition` + `move` žymiai sumažina T_split laiką (pvz., 10 mln. įrašų nuo 6,51 s Strategijoje 1 iki 1,45 s Strategijoje 3).  
 
-## **3. Analizė ir išvados**
+2. **Strategijos efektyvumas (List):**  
+   - List konteineris gerai tvarkosi su trynimais ir `splice` operacijomis, todėl Strategijos 2 ir 3 spartos skirtumai nėra tokie dideli kaip `vector`.   
 
-### **3.1. Didžiausias skirtumas – rūšiavimo laikas ($T_{sort}$)**
+3. **Bendros rekomendacijos:**  
+   - Dideliam kiekiui studentų duomenų Strategija 3 yra geriausias pasirinkimas, nepriklausomai nuo konteinerio tipo.  
+   - Vector konteineriuose būtina naudoti `partition` + `move`, o list – `splice`.
 
-*Netikėtai geresnį rezultatą pasiekė „List“ konteineris.*  
-Teoriškai **Vector** turėtų būti greitesnis, nes jo elementai išdėstyti nuosekliai atmintyje. Tačiau šiame eksperimente **List** rūšiavimo metu (16,85 s) buvo kelis kartus spartesnis nei **Vector** (63,89 s).  
-Tikėtina priežastis – **atminties perkrovimas (paging)**, kai Vector konteineris, apdorodamas 10 milijonų įrašų, viršijo RAM ribas ir pradėjo naudoti lėtesnę diskinę atmintį.
+## 4. Naudojimo ir diegimo instrukcija  
 
----
+### Windows su CMake  
 
-### **3.2. Skirstymo kaštai ($T_{split}$)**
+## 🧩 Naudojimosi ir diegimo instrukcija
 
-Abiejų konteinerių skirstymo etapas buvo gana lėtas. Tai rodo, kad programa atliko **kopijavimą** į naujus failus (*„vargsiukai“* ir *„kietiakai“*) vietoje duomenų perstūmimo atmintyje.  
+Atsisiųskite projektą iš GitHub:
+   ```bash
+   git clone https://github.com/<jusu_vartotojas>/<projektas>.git
+```
+Įeikite į projekto aplanką:
 
----
+```bash
+cd First-Project
+```
+Sukurkite naują aplanką build ir jį atidarykite:
 
-### **3.3. Bendras našumo palyginimas**
+```bash
+mkdir build && cd build
+```
+Sugeneruokite projektą su CMake:
 
-Dėl rūšiavimo etapo vėlavimų **Vector** konteineris prarado dalį efektyvumo, todėl **List** pasiekė geresnį bendrą rezultatą su 10 milijonų įrašų (**152,9 s prieš 169,6 s**).  
-Tai rodo, kad itin dideliuose duomenų kiekiuose **List** gali būti stabilesnis, kai **Vector** susiduria su atminties apribojimais ar fragmentacija.
+```bash
+cmake ..
+```
+Sukompiliuokite programą:
 
----
+```bash
+cmake --build .
+```
+Paleiskite programą:
 
+```bash
+./main
+```
 ## **4. Vizualūs rezultatai**
 
 ### Skaičiavimo pavyzdžiai naudojant *Vector* konteinerius:
@@ -89,8 +135,22 @@ Tai rodo, kad itin dideliuose duomenų kiekiuose **List** gali būti stabilesnis
 
 ---
 
-## **5. Apibendrinimas**
+## 5. Apibendrinimas
 
-Atliktas eksperimentas parodė, kad:  
-- **Vector** yra efektyvus vidutinio dydžio duomenų kiekiams, tačiau jo našumas ženkliai mažėja, kai duomenų kiekis viršija RAM talpą.  
-- **List** konteineris, nors paprastai lėtesnis mažesniuose testuose, išlaiko stabilesnį našumą dideliuose kiekiuose dėl mažesnių atminties perrašymo kaštų.  
+Atliktas eksperimentas parodė, kad:
+
+- **Vector konteineris**  
+  - Efektyvus mažesniems ir vidutinio dydžio duomenų kiekiams.  
+  - Dideliuose duomenų rinkiniuose (10 mln. įrašų) veikimo sparta ženkliai mažėja dėl dažnų trynimų ir kopijavimo operacijų.  
+  - Strategija 3 (Partition + Move) žymiai sumažina T_split laiką, todėl rekomenduojama dideliems failams.
+
+- **List konteineris**  
+  - Nors mažesniuose testuose lėtesnis nei Vector, išlaiko stabilesnį našumą dideliuose duomenų rinkiniuose.  
+  - Efektyviai tvarkosi su trynimais ir perkelimais (splice), todėl Strategija 2 ir 3 skirtumai nėra tokie dideli.  
+
+- **Split strategijų palyginimas**  
+  - Strategija 1: dvigubas kopijavimas – lėčiausia ir atminties reikalaujanti.  
+  - Strategija 2: vienas naujas konteineris su trynimu – efektyvesnė atminties atžvilgiu, bet Vector konteineryje trynimai lėtina procesą.  
+  - Strategija 3: optimaliausia abiem konteinerių tipams – naudoja efektyvius algoritmus (Partition / Splice + Move) ir minimaliai apkrauna atmintį.  
+
+**Išvada:** dideliems studentų duomenų kiekiams Strategija 3 yra rekomenduojama tiek Vector, tiek List konteineriams, o Vector konteineriuose būtina naudoti partition + move, o List – splice.
