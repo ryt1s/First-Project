@@ -9,6 +9,7 @@
 #include <string>
 #include <iomanip>
 #include <limits>
+#include <iterator>
 
 using namespace std;
 using namespace chrono;
@@ -154,6 +155,17 @@ int main() {
     }
     cout << "Rikiuoti:\n1 - Didejanciai\n2 - Mazejanciai\n";
     cin >> order;
+
+    cout << "\nPasirinkite studentu skirstymo strategija (T_split):\n";
+    cout << "1 - Skaidymas i du naujus konteinerius (Kopijavimas)\n";
+    cout << "2 - Skaidymas i viena nauja konteineri (Trynimas/Perkėlimas)\n";
+    cout << "3 - Efektyviausias metodas (Splice/Move)\n";
+    cout << "Jusu pasirinkimas: ";
+    int splitStrategy;
+    cin >> splitStrategy;
+    auto isVargsiukas = [&](const Student& s) {
+        return (sortParam == 2 ? s.galMed : s.galVid) < 5.0;
+    };
 
     if (useList) {
         auto start_sort = high_resolution_clock::now();
